@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>leaflet-wfs demo</title>
+
+  <script src="https://polygit.org/components/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+  <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script type="module" src="./node_modules/@ggcity/leaflet-map/leaflet-map.js"></script>
+  <script type="module" src="./leaflet-wms-group.js"></script>
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>  
+  <leaflet-map
+    latitude="33.778724"
+    longitude="-117.960058"
+    zoom="13"
+    min-zoom="11"
+    max-zoom="19"
+    attribution-prefix="City of Garden Grove"
+  >
+    <!--leaflet-tile-layer
+      base
+      url="//www.ci.garden-grove.ca.us/tileserver/styles/gg-basic/{z}/{x}/{y}.png"
+      attribution="&copy; OpenStreetMap"
+    ></leaflet-tile-layer-->
+
+    <leaflet-wms-group
+      source="//www.ci.garden-grove.ca.us/geoserver/gis/wms"
+      layers='["gis:city_council_districts", "gis:flood_hazard_area"]'
+      transparent
+      format="image/png"
+    ></leaflet-wms-group>
+
+  </leaflet-map>
+
+</body>
+
+</html>

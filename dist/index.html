@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>leaflet-wfs demo</title>
+
+  <script src="https://polygit.org/components/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+  <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="./bundle.js"></script>
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>  
+  <leaflet-map
+    latitude="33.778724"
+    longitude="-117.960058"
+    zoom="13"
+    min-zoom="11"
+    max-zoom="19"
+    attribution-prefix="City of Garden Grove"
+  >
+    <!--leaflet-tile-layer
+      base
+      url="//www.ci.garden-grove.ca.us/tileserver/styles/gg-basic/{z}/{x}/{y}.png"
+      attribution="&copy; OpenStreetMap"
+    ></leaflet-tile-layer-->
+
+    <leaflet-geojson-points
+      source="//www.ci.garden-grove.ca.us/geoserver/gis/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gis:building_open_permits&outputFormat=application%2Fjson&srsName=EPSG:4326"
+      radius="4"
+      weight="1"
+      max-cluster-radius="120"
+      identify
+      cluster
+    ></leaflet-geojson-points>
+
+  </leaflet-map>
+
+</body>
+
+</html>
