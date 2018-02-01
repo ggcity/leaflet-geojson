@@ -73,6 +73,11 @@ export class LeafletGeoJSON extends PolymerElement {
     });
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.map.removeLayer(this._clusterGroup);
+  }
+
   _addGeoJSONLayer(geojson) {
     this._geoJSONOptions = {
       pointToLayer: (this.cluster) ? this._clusterPoints.bind(this) : this._simplePoints.bind(this),
