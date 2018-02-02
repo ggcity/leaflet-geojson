@@ -116,7 +116,7 @@ export class LeafletGeoJSON extends PolymerElement {
       rows += `<tr><td>${fieldName}:</td><td><strong>${feature.properties[p]}</strong></td></tr>`;
     }
 
-    return `<table class='table'>${rows}</table>`;
+    return `<table>${rows}</table>`;
   }
 
   _sourceChange() {

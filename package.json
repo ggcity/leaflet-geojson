@@ -10,6 +10,7 @@
     "start": "webpack-dev-server --config build/webpack.dev.js",
     "build": "webpack --config build/webpack.prod.js"
   },
+  "flat": true,
   "dependencies": {
     "@polymer/polymer": "next",
     "leaflet": "^1.2.0",
