@@ -48,6 +48,11 @@ export class LeafletGeoJSON extends PolymerElement {
         value: 1.0
       },
 
+      fillOpacity: {
+        type: Number,
+        value: 1.0
+      },
+
       cluster: Boolean,
       maxClusterRadius: {
         type: Number,
@@ -76,9 +81,12 @@ export class LeafletGeoJSON extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.map.removeLayer(this._clusterGroup);
+    this._clusterGroup.clearLayers();
   }
 
   _addGeoJSONLayer(geojson) {
+    this._clusterGroup.clearLayers();
+
     this._geoJSONOptions = {
       pointToLayer: (this.cluster) ? this._clusterPoints.bind(this) : this._simplePoints.bind(this),
       attribution: this.attribution,
@@ -96,7 +104,8 @@ export class LeafletGeoJSON extends PolymerElement {
         fillColor: this.fillColor,
         radius: this.radius,
         weight: this.weight,
-        opacity: this.opacity
+        opacity: this.opacity,
+        fillOpacity: this.fillOpacity
       }).bindPopup(this._generatePopupContent(feature))
     );
   }
