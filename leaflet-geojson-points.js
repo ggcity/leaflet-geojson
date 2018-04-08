@@ -76,6 +76,15 @@ export class LeafletGeoJSON extends PolymerElement {
       showCoverageOnHover: false,
       maxClusterRadius: this.maxClusterRadius
     });
+
+    this._circleMakerOptions = {
+      color: this.outlineColor,
+      fillColor: this.fillColor,
+      radius: this.radius,
+      weight: this.weight,
+      opacity: this.opacity,
+      fillOpacity: this.fillOpacity
+    };
   }
 
   disconnectedCallback() {
@@ -89,33 +98,36 @@ export class LeafletGeoJSON extends PolymerElement {
 
     this._geoJSONOptions = {
       pointToLayer: (this.cluster) ? this._clusterPoints.bind(this) : this._simplePoints.bind(this),
-      attribution: this.attribution,
-      onEachFeature: (this.identify) ? this._onEachFeature.bind(this) : null
+      attribution: this.attribution
     };
     this._geoJSONLayer = new GeoJSON(geojson, this._geoJSONOptions);
 
-    this.map.addLayer(this._clusterGroup);
+    if (this.cluster) {
+      this.map.addLayer(this._clusterGroup);
+    } else {
+      this.map.addLayer(this._geoJSONLayer);
+    }
   }
 
   _clusterPoints(feature, latlng) {
-    this._clusterGroup.addLayer(
-      new CircleMarker(latlng, {
-        color: this.outlineColor,
-        fillColor: this.fillColor,
-        radius: this.radius,
-        weight: this.weight,
-        opacity: this.opacity,
-        fillOpacity: this.fillOpacity
-      }).bindPopup(this._generatePopupContent(feature))
-    );
+    let marker = new CircleMarker(latlng, this._circleMakerOptions);
+    if (this.identify) marker.bindPopup(this._generatePopupContent(feature));
+
+    this._clusterGroup.addLayer(marker);
   }
 
   _simplePoints(feature, latlng) {
-    return new CircleMarker(latlng);
+    let marker = new CircleMarker(latlng, this._circleMakerOptions);
+    if (this.identify) marker.bindPopup(this._generatePopupContent(feature));
+
+    return marker;
   }
 
   _onEachFeature(feature, layer) {
-    layer.bindPopup(this._generatePopupContent(feature));
+    console.log('binding');
+    if (this.identify) {
+      layer.bindPopup(this._generatePopupContent(feature));
+    }
   }
 
   _generatePopupContent (feature) {
