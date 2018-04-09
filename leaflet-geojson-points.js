@@ -6,15 +6,11 @@ import { GeoJSON } from '../../leaflet/src/layer/GeoJSON.js';
 import '../../leaflet/src/Leaflet.js';
 import { MarkerClusterGroup } from '../../leaflet.markercluster/src/';
 
-// Dev only
-// import { LeafletMap } from '../../@ggcity/leaflet-map/leaflet-map.js';
-
 export class LeafletGeoJSON extends PolymerElement {
   static get properties () {
     return {
       map: {
-        type: Object,
-        observer: '_mapSet'
+        type: Object
       },
 
       source: {
@@ -76,6 +72,15 @@ export class LeafletGeoJSON extends PolymerElement {
       showCoverageOnHover: false,
       maxClusterRadius: this.maxClusterRadius
     });
+
+    this._circleMakerOptions = {
+      color: this.outlineColor,
+      fillColor: this.fillColor,
+      radius: this.radius,
+      weight: this.weight,
+      opacity: this.opacity,
+      fillOpacity: this.fillOpacity
+    };
   }
 
   disconnectedCallback() {
@@ -88,34 +93,24 @@ export class LeafletGeoJSON extends PolymerElement {
     this._clusterGroup.clearLayers();
 
     this._geoJSONOptions = {
-      pointToLayer: (this.cluster) ? this._clusterPoints.bind(this) : this._simplePoints.bind(this),
-      attribution: this.attribution,
-      onEachFeature: (this.identify) ? this._onEachFeature.bind(this) : null
+      pointToLayer: this._pointToLayer.bind(this),
+      attribution: this.attribution
     };
     this._geoJSONLayer = new GeoJSON(geojson, this._geoJSONOptions);
 
-    this.map.addLayer(this._clusterGroup);
+    if (this.cluster) {
+      this.map.addLayer(this._clusterGroup);
+    } else {
+      this.map.addLayer(this._geoJSONLayer);
+    }
   }
 
-  _clusterPoints(feature, latlng) {
-    this._clusterGroup.addLayer(
-      new CircleMarker(latlng, {
-        color: this.outlineColor,
-        fillColor: this.fillColor,
-        radius: this.radius,
-        weight: this.weight,
-        opacity: this.opacity,
-        fillOpacity: this.fillOpacity
-      }).bindPopup(this._generatePopupContent(feature))
-    );
-  }
+  _pointToLayer(feature, latlng) {
+    let marker = new CircleMarker(latlng, this._circleMakerOptions);
+    if (this.identify) marker.bindPopup(this._generatePopupContent(feature));
 
-  _simplePoints(feature, latlng) {
-    return new CircleMarker(latlng);
-  }
-
-  _onEachFeature(feature, layer) {
-    layer.bindPopup(this._generatePopupContent(feature));
+    if (this.cluster) this._clusterGroup.addLayer(marker);
+    return marker;
   }
 
   _generatePopupContent (feature) {
@@ -135,11 +130,6 @@ export class LeafletGeoJSON extends PolymerElement {
       .then(res => res.json())
       .then(this._addGeoJSONLayer.bind(this));
     // .catch(() => alert('Unable to load layer'));
-  }
-
-  _mapSet() {
-    // console.log('adding layer');
-    // this.map.addLayer(this._geoJSONLayer);
   }
 }
 
