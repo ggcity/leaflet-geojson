@@ -6,15 +6,11 @@ import { GeoJSON } from '../../leaflet/src/layer/GeoJSON.js';
 import '../../leaflet/src/Leaflet.js';
 import { MarkerClusterGroup } from '../../leaflet.markercluster/src/';
 
-// Dev only
-// import { LeafletMap } from '../../@ggcity/leaflet-map/leaflet-map.js';
-
 export class LeafletGeoJSON extends PolymerElement {
   static get properties () {
     return {
       map: {
-        type: Object,
-        observer: '_mapSet'
+        type: Object
       },
 
       source: {
@@ -97,7 +93,7 @@ export class LeafletGeoJSON extends PolymerElement {
     this._clusterGroup.clearLayers();
 
     this._geoJSONOptions = {
-      pointToLayer: (this.cluster) ? this._clusterPoints.bind(this) : this._simplePoints.bind(this),
+      pointToLayer: this._pointToLayer.bind(this),
       attribution: this.attribution
     };
     this._geoJSONLayer = new GeoJSON(geojson, this._geoJSONOptions);
@@ -109,25 +105,12 @@ export class LeafletGeoJSON extends PolymerElement {
     }
   }
 
-  _clusterPoints(feature, latlng) {
+  _pointToLayer(feature, latlng) {
     let marker = new CircleMarker(latlng, this._circleMakerOptions);
     if (this.identify) marker.bindPopup(this._generatePopupContent(feature));
 
-    this._clusterGroup.addLayer(marker);
-  }
-
-  _simplePoints(feature, latlng) {
-    let marker = new CircleMarker(latlng, this._circleMakerOptions);
-    if (this.identify) marker.bindPopup(this._generatePopupContent(feature));
-
+    if (this.cluster) this._clusterGroup.addLayer(marker);
     return marker;
-  }
-
-  _onEachFeature(feature, layer) {
-    console.log('binding');
-    if (this.identify) {
-      layer.bindPopup(this._generatePopupContent(feature));
-    }
   }
 
   _generatePopupContent (feature) {
@@ -147,11 +130,6 @@ export class LeafletGeoJSON extends PolymerElement {
       .then(res => res.json())
       .then(this._addGeoJSONLayer.bind(this));
     // .catch(() => alert('Unable to load layer'));
-  }
-
-  _mapSet() {
-    // console.log('adding layer');
-    // this.map.addLayer(this._geoJSONLayer);
   }
 }
 

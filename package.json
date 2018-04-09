@@ -1,6 +1,6 @@
 {
   "name": "@ggcity/leaflet-geojson",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Leaflet GeoJSON Web Components Collection",
   "main": "main.js",
   "repository": "https://github.com/ggcity/leaflet-geojson",
